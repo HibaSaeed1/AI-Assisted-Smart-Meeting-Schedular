@@ -1,9 +1,8 @@
 import smtplib
 
 
-EMAIL="hibasaeed424@gmail.com"
-
-PASSWORD="cyynjjycdyaevmhb"
+EMAIL="your_email@gmail.com"
+PASSWORD="your_app_password"
 
 
 
@@ -31,5 +30,6 @@ Time:{start}-{end}
     server.login(EMAIL,PASSWORD)
 
     server.sendmail(EMAIL,to,message)
+
 
     server.quit()
