@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>AI Smart Meeting Scheduler</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+<h1>AI Smart Meeting Scheduler</h1>
+
+<!-- LOGIN -->
+<div id="login">
+<input id="email" placeholder="Enter Email">
+<br><br>
+<button onclick="login()">
+Google Sign In
+</button>
+</div>
+
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+<h3>
+Logged in as:
+<span id="user"></span>
+</h3>
+<h2>Select Date</h2>
+<input type="date" id="date">
+
+
+
+<h2>Available Slots</h2>
+<button onclick="loadSlots()">
+Find Slots
+</button>
+
+
+<ul id="slots"></ul>
+<br>
+<button onclick="logout()">
+Logout
+</button>
+
+<p id="msg"></p>
+</div>
+</div>
+<script>
+
+
+let email=""
+
+async function login(){
+email=document.getElementById("email").value
+if(email==""){
+
+alert("Enter email")
+
+return
+
+}
+let r=await fetch("http://127.0.0.1:8000/login",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+email:email
+
+})
+
+})
+
+let res=await r.json()
+document.getElementById("user").innerText=res.email
+document.getElementById("login").style.display="none"
+document.getElementById("dashboard").style.display="block"
+
+}
+
+function logout(){
+
+location.reload()
+
+}
+
+async function loadSlots(){
+
+let date=document.getElementById("date").value
+
+if(date==""){
+
+alert("Select Date")
+
+return
+
+}
+let r=await fetch("http://127.0.0.1:8000/slots?date="+date)
+
+let data=await r.json()
+let list=document.getElementById("slots")
+
+list.innerHTML=""
+
+data.forEach(s=>{
+
+let li=document.createElement("li")
+
+li.innerHTML=
+
+li.innerHTML=
+
+s.date+" "+s.start+"-"+s.end+
+
+" Score:"+s.score+
+
+" <button onclick='book(\""+
+
+s.date+"\",\""+
+
+s.start+"\",\""+
+
+s.end+"\")'>Book</button>"
+
+list.appendChild(li)
+})
+}
+
+async function book(date,start,end){
+
+let data={
+
+email:email,
+date:date,
+start:start,
+end:end
+
+}
+let r=await fetch("http://127.0.0.1:8000/book",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify(data)
+
+})
+let res=await r.json()
+document.getElementById("msg").innerText=
+
+"✅ Meeting Booked | Email Sent"
+
+}
+</script>
+
+</body>
+</html>
